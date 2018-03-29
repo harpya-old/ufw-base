@@ -1,6 +1,6 @@
 <?php
 
-namespace xbrain\ufw;
+namespace harpya\ufw;
 
 class Utils {
     

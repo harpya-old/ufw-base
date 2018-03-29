@@ -1,5 +1,5 @@
 <?php
-namespace xbrain\ufw;
+namespace harpya\ufw;
 
 
 

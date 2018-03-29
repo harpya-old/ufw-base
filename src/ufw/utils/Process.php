@@ -1,11 +1,5 @@
 <?php
-namespace xbrain\ufw\utils;
-/* ==============================================================================================================
-
-  Process -
-  Holds information about a given process.
-
-  ============================================================================================================== */
+namespace harpya\ufw\utils;
 
 class Process  
 //extends Object 
@@ -35,7 +29,8 @@ class Process
         $this->title = ( $process_name ) ? $process_name : $this->command;
     }
 
-    /* --------------------------------------------------------------------------------------------------------------
+    /* 
+     * 
 
       NAME
       ToArgv - Converts a command-line string to an argv array.
@@ -58,7 +53,7 @@ class Process
       RETURN VALUE
       Returns an array containing the arguments.
 
-     * ------------------------------------------------------------------------------------------------------------- */
+     */
 
     protected function toArgv($str, $argv0 = false) {
         $argv = [];

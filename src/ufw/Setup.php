@@ -1,5 +1,5 @@
 <?php
-namespace xbrain\ufw;
+namespace harpya\ufw;
 
 
 class Setup {
@@ -182,7 +182,7 @@ require __DIR__."/../../../../../vendor/autoload.php";
 // require __DIR__."/../../ufw/vendor/autoload.php";
 
 
-$request = \xbrain\ufw\Request::of();
+$request = \harpya\ufw\Request::of();
 
 $appFolder = __DIR__.'/../../../../../apps/';
 //$appFolder = '../../../../../apps/';
@@ -190,11 +190,11 @@ $appFolder ='../apps/';
 
 //echo "\n\n\n $appFolder \n\n ";
 
-$app = \xbrain\ufw\ApplicationCli::getInstance([
+$app = \harpya\ufw\ApplicationCli::getInstance([
     Application::DEF_APPS_PATH => $appFolder ,
-    Application::CMP_ROUTER => new \xbrain\ufw\Router(),
+    Application::CMP_ROUTER => new \harpya\ufw\Router(),
     Application::CMP_REQUEST => $request,
-    Application::CMP_CONFIG => \xbrain\ufw\Config::of(__DIR__.'/../../../..')
+    Application::CMP_CONFIG => \harpya\ufw\Config::of(__DIR__.'/../../../..')
 ]);
 
 

@@ -1,5 +1,5 @@
 <?php
-namespace xbrain\ufw;
+namespace harpya\ufw;
 
 
 abstract class BO {
@@ -41,7 +41,7 @@ abstract class BO {
     
     /**
      * 
-     * @param \xbrain\ufw\DAO $dao
+     * @param \harpya\ufw\DAO $dao
      */
     public function setDAO($dao){
         $this->__dao = $dao;
@@ -51,7 +51,7 @@ abstract class BO {
     
     /**
      * 
-     * @return \xbrain\ufw\DAO
+     * @return \harpya\ufw\DAO
      */
     public function getDAO() {        
         return $this->__dao;
@@ -63,13 +63,13 @@ abstract class BO {
     
     /**
      * 
-     * @param \xbrain\ufw\DAO $dao
+     * @param \harpya\ufw\DAO $dao
      */
     public function __construct($dao=false) {
         if ($dao) {
             $this->setDAO($dao);
         } else {
-            $this->setDAO(\xbrain\ufw\Application::getInstance()->getDB());
+            $this->setDAO(\harpya\ufw\Application::getInstance()->getDB());
         }        
     }
     

@@ -1,5 +1,5 @@
 <?php
-namespace xbrain\ufw\utils;
+namespace harpya\ufw\utils;
 
 
 
@@ -13,14 +13,6 @@ class ProcessHandler implements
 
     protected $filters = [];
     
-    /* --------------------------------------------------------------------------------------------------------------
-
-      Constructor -
-      Instanciate a ProcessHandler object and optionally get the running process list if the $load parameter is
-      true.
-
-     * ------------------------------------------------------------------------------------------------------------- */
-
     public function __construct($load = true) {
 
         if ($load)
@@ -38,13 +30,6 @@ class ProcessHandler implements
     }
     
     
-    /* --------------------------------------------------------------------------------------------------------------
-
-      GetProcess -
-      Gets a process entry by its process id.
-
-     * ------------------------------------------------------------------------------------------------------------- */
-
     public function getProcess($id) {
         
         if (array_key_exists($id, $this->processesList)) {
@@ -53,14 +38,6 @@ class ProcessHandler implements
 
         return false;
     }
-
-    /* --------------------------------------------------------------------------------------------------------------
-
-      GetProcessByName -
-      Gets a process entry by its name.
-      Returns an array since it can match several running processes.
-
-     * ------------------------------------------------------------------------------------------------------------- */
 
     public function getProcessByName($name) {
         $result = [];
@@ -74,12 +51,7 @@ class ProcessHandler implements
         return ( $result );
     }
 
-    /* --------------------------------------------------------------------------------------------------------------
 
-      GetChildren -
-      Gets process children.
-
-     * ------------------------------------------------------------------------------------------------------------- */
 
     public function getChildren($id) {
         $result = [];
@@ -161,12 +133,6 @@ class ProcessHandler implements
     }
     
 
-    /* --------------------------------------------------------------------------------------------------------------
-
-      Interfaces implementations.
-
-     * ------------------------------------------------------------------------------------------------------------- */
-
     // Countable interface
     public function count() {
         return ( count($this->processesList) );
@@ -194,11 +160,6 @@ class ProcessHandler implements
         throw ( new \Exception("Unsupported operation.") );
     }
 
-    /* --------------------------------------------------------------------------------------------------------------
-
-      Protected functions.
-
-     * ------------------------------------------------------------------------------------------------------------- */
 }
 
 

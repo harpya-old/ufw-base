@@ -1,6 +1,6 @@
 #!/usr/bin/env php
 <?php
-$className = "xbrain\\ufw\\Setup";
+$className = "harpya\\ufw\\Setup";
 $app = require __DIR__ . '/../app/ufw.php';
 
 try {

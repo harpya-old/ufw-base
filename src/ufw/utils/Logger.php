@@ -1,5 +1,5 @@
 <?php
-namespace xbrain\ufw\utils;
+namespace harpya\ufw\utils;
 
 
 trait Logger {
