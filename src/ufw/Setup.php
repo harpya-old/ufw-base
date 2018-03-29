@@ -12,7 +12,10 @@ class Setup {
     ];
     
     const FILES_APP = [
-        
+        'routes/main.json' => 'ew0KICAgICJkZWZhdWx0Ijogew0KCSJjb250cm9sbGVyIiA6ICJcXG15YXBwXFxNeUNvbnRyb2xsZXIiLA0KICAgICAgICAibWV0aG9kIiA6ICJ3ZWxjb21lIg0KICAgIH0sDQogICAgInJvdXRlcyI6IHsNCiAgICAgICAgIi9pbmZvIiA6IHsNCiAgICAgICAgICAgICJHRVQiIDogew0KICAgICAgICAgICAgICAgICJldmFsIiA6ICJwaHBpbmZvKCk7Ig0KICAgICAgICAgICAgfQ0KICAgICAgICB9DQogICB9DQp9DQo=',
+        'src/Mycontroller.php' => 'PD9waHANCg0KbmFtZXNwYWNlIG15YXBwOw0KDQpjbGFzcyBNeUNvbnRyb2xsZXIgZXh0ZW5kcyBcaGFycHlhXHVmd1xDb250cm9sbGVyICB7DQoNCglwdWJsaWMgZnVuY3Rpb24gd2VsY29tZSgpIHsNCiAgICAgICAgZWNobyAiXG5XZWxjb21lIHRvIEhhcnB5YSFcbiI7DQoJfQ0KDQp9DQo=',
+        'bootstrap.php' => 'PD9waHANCiR0b0luY2x1ZGUgPSBfX0RJUl9fIC4iL3ZlbmRvci9hdXRvbG9hZC5waHAiOw0KaW5jbHVkZSAkdG9JbmNsdWRlOw0K',
+        'composer.json' => 'ew0KICAgICJhdXRvbG9hZCI6IHsNCiAgICAgICAgInBzci00Ijogew0KICAgICAgICAgICAgIm15YXBwXFwiOiAic3JjLyINCiAgICAgICAgfQ0KICAgIH0NCn0='
     ];
     
     
@@ -98,8 +101,12 @@ class Setup {
     protected function createProject($projectName='myProj') {        
         Console::stdout("Creating $projectName \n");        
         
-        $this->createDirectory("./apps/".$projectName, ['src', 'routes', 'bootstrap', 'config', 'public', 'doc','templates']);
+        $this->createDirectory("./apps/".$projectName, ['src', 'routes', 'config', 'public', 'doc','templates']);
         echo "\n";
+        foreach (self::FILES_APP as $pathname => $contents) {
+            $this->createFile("./apps/".$projectName."/".$pathname, $contents);
+        }        
+        echo "\n Don't forget to run 'composer update' in your root project folder (apps/".$projectName.") before start to use! \n";
     }
     
     
