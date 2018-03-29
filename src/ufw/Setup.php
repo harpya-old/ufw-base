@@ -170,25 +170,18 @@ class Setup {
             $uri = $url;
         }
         
-        
-//        print_r($data);
-//        echo "\n $url \n " . __DIR__ . "\n\n";
         $_REQUEST = $data;
         $_SERVER['REQUEST_URI'] = $uri;
         $_SERVER['REQUEST_METHOD'] = $method;
                 
 
 require __DIR__."/../../../../../vendor/autoload.php";
-// require __DIR__."/../../ufw/vendor/autoload.php";
 
 
 $request = \harpya\ufw\Request::of();
 
 $appFolder = __DIR__.'/../../../../../apps/';
-//$appFolder = '../../../../../apps/';
 $appFolder ='../apps/';
-
-//echo "\n\n\n $appFolder \n\n ";
 
 $app = \harpya\ufw\ApplicationCli::getInstance([
     Application::DEF_APPS_PATH => $appFolder ,
@@ -201,18 +194,8 @@ $app = \harpya\ufw\ApplicationCli::getInstance([
 
 $app->init();
 
-
-///print_r($app->getRouter()->getRoutes());
-
-
-$app->run();
-
-        
-        
-        
-                
-//        require_once __DIR__ .'/../../../../../bootstrap/init.php'; 
-        
+$out = $app->run();
+print_r($out);
         exit;
     }
     
