@@ -1,7 +1,7 @@
 <?php
 
 error_reporting(E_ALL & !E_NOTICE);
-error_reporting(E_ALL);
+//error_reporting(E_ALL);
 
 $autoloader = require __DIR__ . '/../src/composer_autoloader.php';
 
