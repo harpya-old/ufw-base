@@ -1,0 +1,28 @@
+{
+    "name": "harpya/ufw-base",
+    "description": "Micro-framework, intended to small API based web applications.",
+    "type": "library",
+    "license": "Apache-2.0",
+    "authors": [
+        {
+            "name": "harpya",
+            "email": "contact@harpya.net"
+        }
+    ],
+    "require": {
+        "altorouter/altorouter": "^1.2",
+        "smarty/smarty": "^3.1",
+        "clio/clio": "^0.1.8",
+        "guzzlehttp/guzzle": "^6.3",
+        "monolog/monolog":"*"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^7.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "harpya\\ufw\\": "src/ufw"
+        }
+    },    
+    "bin": ["bin/ufw", "bin/ufw-agent"]
+}

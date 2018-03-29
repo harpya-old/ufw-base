@@ -1,0 +1,12 @@
+#!/usr/bin/env php
+<?php
+$className = "xbrain\\ufw\\AgentCli";
+$app = require __DIR__ . '/../app/ufw.php';
+
+try {
+    $app->run();
+} catch (\Exception $ex) {
+    echo "\nError: " . $ex->getMessage();
+    echo "\n";
+}
+
