@@ -9,33 +9,31 @@ class AgentCli {
             "--help" => [
                 "summary" => "Shows this help."
             ],
-            "--create" => [
-                "summary" => "Create a new application.",
-                "examples" => [
-                    "--create=demo  \t create the application 'demo'"
-                ]
+            "--config" => [
+                "summary" => "Define the configuration for this instance",
             ], 
-            "--init" => [
-                "summary" => "Initialize the uFw workspace, creating folders and files needed."
+            "--config-file" => [
+                "summary" => "Informs to agent the path of configuration file"
+                
+            ], 
+            "--tasks" => [
+                "summary" => "Define the tasks list for this instance",
+            ], 
+            "--tasks-file" => [
+                "summary" => "Informs to agent the path of tasks file"
                 
             ], 
             "--run" => [
-                "summary" => "Runs the application service defined by URI passwd by parameter.",
-                "examples" => [
-                    "--run=get:/app/demo/application_route",
-                    "--run=post:/app/demo/user",
-                    "--run=put:/app/demo/user/123"
-                ]
-                
+                "summary" => "Starts the agent instance"                
             ],
-            "--data" => [
-                "summary" => "Pass data to application (Presumes the --run option)",
-                "format" => "String in JSON notation",
-                "description" => "Used",
-                "examples" => [
-                    "--data='{\"email\":\"email@domain.com\"}'",
-                    "--data='[{\"record\":625, \"code\":\"AB123\"},{\"record\":731, \"code\":\"23F4E\"}]'"
-                ]
+            "--status" => [
+                "summary" => "Gets the instance's status"
+            ],
+            "--force-clean" => [
+                "summary" => "Used with --status option, implies that all 'dead' instances will be cleaned from lock file"
+            ],
+            "--force-restart" => [                
+                "summary" => "Used with --status option, implies that all 'dead' instances will be restarted, with the same configuration"
             ]
         ]
     ];
@@ -134,7 +132,7 @@ class AgentCli {
                 if ($ph->getProcess($pid)) {
                     $stat = ' running ';
                 } else {
-                    $stat = ' missing ';
+                    $stat = ' dead    ';
                     
                     if (Console::getArg('--force-restart')) {
                         $stat = $this->restartAgent($data);
