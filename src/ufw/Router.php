@@ -5,6 +5,9 @@ namespace harpya\ufw;
 
 class Router extends \AltoRouter {
     
+    protected $applicationName;
+    protected $defaults = [];
+    
     
     public function loadRoutes($path=false, $application='') {
         
@@ -30,7 +33,14 @@ class Router extends \AltoRouter {
     
     public function loadRouteFile($path, $application='') {
         $txt = file_get_contents($path);
+        
         $json = json_decode($txt, true);
+        
+        if (!$json) {
+            Application::getInstance()->warn("Invalid route JSON file", ['contents'=>$txt, 'path'=>$path, 'application' => $application]);
+            return;
+        }
+        
         if (empty($application)) {
             $prefix = '';
         } else {
@@ -43,6 +53,10 @@ class Router extends \AltoRouter {
 
         if (array_key_exists('routes', $json)) {
             $this->processMap($json['routes'],$prefix);
+        }
+        
+        if (array_key_exists('default', $json)) {
+            $this->defaults[$application] = $json['default'];
         }        
     }
     
@@ -51,13 +65,9 @@ class Router extends \AltoRouter {
         
         foreach ($arr as $uri => $options) {
             
-            $s = preg_replace("/\{([\w]+)\}/", "[*:$1]", $uri);
             
-            if (!empty($s)) {
-                $uri = $s;
-            }
             
-            $uri = $prefix . $uri;
+            $uri = $prefix . $this->preProcessURI($uri);
             
             foreach ($options as $method => $target) {
                 if (array_key_exists('name', $target)) {
@@ -71,34 +81,18 @@ class Router extends \AltoRouter {
     }
     
     
-    public function evaluate2() {
-        $return = false;
-        $match = $this->match();
-//        echo $_SERVER['REQUEST_URI'];
-        if (is_array($match) && array_key_exists('target', $match)) {
+    protected function preProcessURI($uri) {
+        $s = preg_replace("/\{([\w]+)\}/", "[*:$1]", $uri);
             
-            $target = $match['target'];
- 
-            if (array_key_exists('controller', $target)) {
-                $return = $this->processController($target, $match);               
-            } elseif (array_key_exists('view', $target)) {          
-                $return = $this->processView($target,$match);
-            } elseif (array_key_exists('eval', $target)) {
-                $return = eval($target['eval']);
-            } else {
-                $return = ['success'=>false, 'msg' =>  "Target undefined",'code'=>404, 'info'=> $match];           
-            }
-        } else {
-            $return = ['success'=>false, 'msg' =>  "Target not found",'code'=>404, 'info'=> $match];
+        if (!empty($s)) {
+            $uri = $s;
         }
         
-//        if (json_decode(json_encode($return),true)===$return) {
-//            $this->sendJSON($return);
-//        }
-        
-        
-        return $return;
+        return $uri;
     }
+    
+    
+    
     
     
     
@@ -123,8 +117,6 @@ class Router extends \AltoRouter {
     
     
     
-    protected $applicationName;
-    
     public function getApplicationName() {
         if (!$this->applicationName) {
             $matches = [];
@@ -146,16 +138,23 @@ class Router extends \AltoRouter {
     public function resolve() {
         $return = false;
         $match = $this->match();
-//        echo $_SERVER['REQUEST_URI'];
+//        echo $_SERVER['REQUEST_URI'] . "\n";
 //        echo "<br>";
 //        print_r($match);
 //        echo "<br>";
 //        print_r($this->routes);
 //        echo "<br>";
+        if (!$match) {            
+            $target = $this->getDefaultRoute();
+            if ($target) {
+                $match = ['target' => $target];
+            }                            
+        }
         
         if (is_array($match) && array_key_exists('target', $match)) {
             
             $target = $match['target'];
+            
             $return = ['target'=>$target, 'match'=>$match, 'application' => $this->getApplicationName()];
             
             if (array_key_exists('controller', $target)) {
@@ -164,7 +163,7 @@ class Router extends \AltoRouter {
                 $return['type'] = 'view';
             } elseif (array_key_exists('eval', $target)) {
                 $return['type'] = 'eval';
-            } else {
+            } else { 
                 $return = ['success'=>false, 'msg' =>  "Target undefined",'code'=>404, 'info'=> $match];           
             }
         } else {
@@ -177,6 +176,13 @@ class Router extends \AltoRouter {
         
         
         return $return;        
+    }
+    
+    
+    protected function getDefaultRoute() {
+        if (utils::get($this->getApplicationName(), $this->defaults)) {
+            return utils::get($this->getApplicationName(), $this->defaults);
+        }
     }
     
     

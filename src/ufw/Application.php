@@ -2,7 +2,8 @@
 namespace harpya\ufw;
 
 class Application {
-    
+     use utils\Logger;
+     
     const CMP_VIEW = 'view';
     const CMP_REQUEST = 'request';
     const CMP_DB = 'db';
@@ -76,8 +77,7 @@ class Application {
     
     
     public function run() {
-        $result = $this->getRouter()->resolve();
-        
+        $result = $this->getRouter()->resolve();        
         try {
             $response = $this->getRouter()->evaluate($result);
         } catch (\Exception $ex) {
