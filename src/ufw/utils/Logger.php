@@ -4,32 +4,32 @@ namespace harpya\ufw\utils;
 
 trait Logger {
     
-    protected function initLogger($props=[]) {
+    public function initLogger($props=[]) {
         
     }
     
     
-    protected function debug($msg, $additionalInfo=false) {
+    public function debug($msg, $additionalInfo=false) {
         
     }
     
-    protected function info($msg, $additionalInfo=false) {
+    public function info($msg, $additionalInfo=false) {
         
     }
     
-    protected function notice($msg, $additionalInfo=false) {
+    public function notice($msg, $additionalInfo=false) {
         
     }
     
-    protected function warn($msg, $additionalInfo=false) {
+    public function warn($msg, $additionalInfo=false) {
         
     }
     
-    protected function error($msg, $additionalInfo=false) {
+    public function error($msg, $additionalInfo=false) {
         
     }
     
-    protected function notify($msg, $additionalInfo=false) {
+    public function notify($msg, $additionalInfo=false) {
         
     }
     
