@@ -23,3 +23,6 @@
 - help feature improved
 
 ### v0.0.7 First version with agent
+
+### v0.1.0 First stable version
+ 
