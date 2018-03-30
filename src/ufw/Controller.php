@@ -43,8 +43,6 @@ class Controller {
         
         if ($instance) {
             self::$instance = $instance;
-//        } elseif (!self::$instance) {
-//            self::$instance = new Controller();
         }
         
         return self::$instance;

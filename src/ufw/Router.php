@@ -61,11 +61,15 @@ class Router extends \AltoRouter {
     }
     
     
+    /**
+     * For each array item, pre process and add to global mapping
+     * 
+     * @param array $arr
+     * @param string $prefix
+     */
     protected function processMap($arr, $prefix='') {
         
         foreach ($arr as $uri => $options) {
-            
-            
             
             $uri = $prefix . $this->preProcessURI($uri);
             
@@ -80,7 +84,11 @@ class Router extends \AltoRouter {
         
     }
     
-    
+    /**
+     * Replace the macros by regular expressions to extract arguments from URL
+     * @param string $uri
+     * @return string
+     */
     protected function preProcessURI($uri) {
         $s = preg_replace("/\{([\w]+)\}/", "[*:$1]", $uri);
             
@@ -95,7 +103,13 @@ class Router extends \AltoRouter {
     
     
     
-    
+    /**
+     * Determine which type of target is, and execute it.
+     *  
+     * @param array $target
+     * @return mixed
+     * @throws \Exception
+     */
     public function evaluate($target) {
         
         switch ($target['type']) {
@@ -126,24 +140,20 @@ class Router extends \AltoRouter {
                 $this->applicationName = $matches[1];
             } else {
                 $this->applicationName = '';
-//                throw new \Exception("Invalid URI",9002);
             }
-            //echo "\n ".$this->applicationName . "\n";
         }
         return $this->applicationName;
     }
     
     
-    
+    /**
+     * Perform the match among the URI and the routes available
+     * @return mixed
+     */
     public function resolve() {
         $return = false;
         $match = $this->match();
-//        echo $_SERVER['REQUEST_URI'] . "\n";
-//        echo "<br>";
-//        print_r($match);
-//        echo "<br>";
-//        print_r($this->routes);
-//        echo "<br>";
+
         if (!$match) {            
             $target = $this->getDefaultRoute();
             if ($target) {
@@ -170,11 +180,6 @@ class Router extends \AltoRouter {
             $return = ['success'=>false, 'msg' =>  "Target not found",'code'=>404, 'info'=> $match];
         }
         
-//        if (json_decode(json_encode($return),true)===$return) {
-//            $this->sendJSON($return);
-//        }
-        
-        
         return $return;        
     }
     
@@ -184,9 +189,6 @@ class Router extends \AltoRouter {
             return utils::get($this->getApplicationName(), $this->defaults);
         }
     }
-    
-    
-    
     
     
     protected function processRequest($params=[]) {
@@ -254,12 +256,6 @@ class Router extends \AltoRouter {
         }
         return $return;
     }
-    
-    
-    public function execute() {
-        
-    }
-    
     
     
 }
