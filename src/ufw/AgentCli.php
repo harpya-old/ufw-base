@@ -43,7 +43,7 @@ class AgentCli {
             'delay' => 5,
             'host' => 'http://localhost:8008',
             'config_ttl' => 90,       
-            'lock_dir' => './',
+            'lock_dir' => './tmp',
             'tasks_ttl' => 60
         ];
     
@@ -206,8 +206,10 @@ class AgentCli {
         
         while($this->run) {            
             $task = $this->getNextTask();
-            if ($task) {               
-                $this->runTask($task);
+            if ($task) {
+                $response = $task->execute();
+                $this->debug("Output", $response);
+//                $this->runTask($task);
             }
             $this->sleep();
             $this->refreshConfiguration();            
@@ -311,13 +313,15 @@ class AgentCli {
         if ($type == 'cli') {
             
             $json = json_decode($data,true);
-            $this->tasks = $json;
+            $tasks = Task::fromArray($json);
+            $this->tasks = $tasks;
             $this->debug("Applying cli task list",  $this->tasks);
         } elseif ($type == 'file') {
             if (file_exists($data)) {
                 $text = file_get_contents($data);
                 $json = json_decode($text,true);
-                $this->tasks = array_replace_recursive($this->tasks, $json);
+                $tasks = Task::fromArray($json);
+                $this->tasks = array_replace_recursive($this->tasks, $tasks);
                 $this->debug("Applying file tasks ",  $this->tasks);
             }
         }
@@ -353,7 +357,7 @@ class AgentCli {
             'base_uri' => $baseURI
         ]);
         
-        
+        // base_uri, method, uri, options
         
         $httpMethod = Utils::get('method', $task, 'GET');
         $uri = Utils::get('uri', $task, '/');
@@ -363,6 +367,7 @@ class AgentCli {
         $response = $client->request($httpMethod, $uri, $options);
         
         $body = $response->getBody();
+        
         
         $this->debug("Output", $body);
         
