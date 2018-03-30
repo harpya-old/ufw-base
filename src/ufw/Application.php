@@ -101,6 +101,9 @@ class Application {
      */
     protected function getComponent($key, $index=false) {
         if (!Utils::get($key, $this->lsComponents)) {
+                echo "<pre>";
+                echo debug_print_backtrace();
+
             throw new \Exception("Component " . $key." is not defined",1);
         }
         
@@ -110,6 +113,9 @@ class Application {
             if (array_key_exists($index, $cmp)) {
                 $cmp = $cmp[$index];
             } else {
+                echo "<pre>";
+                echo debug_print_backtrace();
+                exit;
                 throw new \Exception("Component $key ($index) is not defined", 2);
             }
         }
@@ -156,6 +162,28 @@ class Application {
     }
     
     
+    /**
+     * 
+     * @return \harpya\ufw\view\Smarty
+     */
+    public function getView() {
+        
+        $cmp = $this->getComponent(self::CMP_VIEW);
+        $cmp->init();
+        
+//            $tplPath = \harpya\ufw\Application::getInstance()->getApplicationsPath2().
+//            \harpya\ufw\Utils::getInstance()->getApplicationName().'/'.$this->tempTplDir;
+//            
+//            echo $tplPath;
+//            
+//            self::$instance->setTemplateDir($tplPath);
+//            self::$instance->step=1;
+
+            
+        return $cmp;
+    }
+    
+    
     public function getApplicationsPath() {
         return $this->appsPath;
     }
@@ -166,7 +194,9 @@ class Application {
     }
     
     
-    
+    public function getApplicationName() {
+        return Utils::getInstance()->getApplicationName();
+    }
     
     
     
@@ -182,10 +212,6 @@ class Application {
     protected function loadConfig() {
         $path = $this->getConfig()->getPath().'/../config/routes.json';
         $this->getRouter()->loadRoutes($path);
-        
-        
-        
-        
     }
     
     

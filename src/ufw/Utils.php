@@ -91,6 +91,22 @@ class Utils {
         file_put_contents($pathname, base64_decode($contents));
     }
     
+    
+    protected $applicationName;
+    public function getApplicationName() {
+        if (!$this->applicationName) {
+            $matches = [];
+            $uri = $_SERVER['REQUEST_URI'];
+            preg_match("/^\/app\/([\w]+)\//", $uri, $matches);
+            if (is_array($matches) && (count($matches)==2)) {
+                $this->applicationName = $matches[1];
+            } else {
+                $this->applicationName = '';
+            }
+        }
+        return $this->applicationName;        
+    }
+    
 }
 
 
