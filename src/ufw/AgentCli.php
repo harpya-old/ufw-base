@@ -50,6 +50,7 @@ class AgentCli {
     
     protected $run;
     protected $config;
+    protected $configFilename;
     protected $tasks = [];
     protected $lsAgentStatus = [];
     
@@ -80,9 +81,11 @@ class AgentCli {
         
         if (Console::getArg('--config')) {
             $this->applyConfig('cli',Console::getArg('--config'));
+            $this->config['config_ttl'] = false;
             //return;
         } elseif (Console::getArg('--config-file')) {
-            $this->applyConfig('file',Console::getArg('--config-file'));
+            $this->configFilename = Console::getArg('--config-file');
+            $this->applyConfig('file',$this->configFilename);
         }
         
         if (Console::getArg('--tasks')) {
@@ -182,7 +185,9 @@ class AgentCli {
     
     
     public function __construct() {
+        $this->turnDebugOutputOff();
         $this->applyConfig('cli', '[]');
+        $this->turnDebugOutputOn();
     }
     
     
@@ -207,12 +212,14 @@ class AgentCli {
         while($this->run) {            
             $task = $this->getNextTask();
             if ($task) {
+                $this->debug('Executing', $task->getAll());
                 $response = $task->execute();
                 $this->debug("Output", $response);
 //                $this->runTask($task);
             }
             $this->sleep();
-            $this->refreshConfiguration();            
+            $this->refreshConfiguration();   
+            $this->refreshTasks();
         }
         
         
@@ -285,7 +292,7 @@ class AgentCli {
         if (file_exists($lockFile)) {
             $lock = json_decode(file_get_contents($lockFile),true);
         } else {
-            throw new \Exception("Lock file does not exists",8);
+            throw new \Exception("Lock file does not exists ($lockFile)",8);
         }
         return $lock;
         
@@ -317,12 +324,13 @@ class AgentCli {
             $this->tasks = $tasks;
             $this->debug("Applying cli task list",  $this->tasks);
         } elseif ($type == 'file') {
+            $this->debug("\n\n\n\n\n ####### \n Applying the tasks from $data");
             if (file_exists($data)) {
                 $text = file_get_contents($data);
                 $json = json_decode($text,true);
                 $tasks = Task::fromArray($json);
                 $this->tasks = array_replace_recursive($this->tasks, $tasks);
-                $this->debug("Applying file tasks ",  $this->tasks);
+                $this->debug("#######\n######### Applying file tasks ",  $this->tasks);
             }
         }
         
@@ -380,31 +388,43 @@ class AgentCli {
     
     protected function refreshConfiguration() {
         
-        $ttl = Utils::get('config_ttl', $this->config,'./');
+        $ttl = Utils::get('config_ttl', $this->config,60);
         
         $elapsedTime = (time() - $this->lastConfigUpdate);
         $diffTTL = $ttl - $elapsedTime;
         
+//        $this->debug("### diffTTL = $diffTTL" );
+        
+        
         if ($diffTTL < 0) {
-            $this->debug("Refreshing configuration");
+            $this->debug("### Refreshing configuration");           
             $pid = getmypid();
             $config = $this->readLockFile();
-            if (array_key_exists($pid, $config)) {
-                $this->config = $config[$pid];
-            }
             
+//            $this->debug("### Configuration", ['pid'=>$pid, 'lock' => $config]);
+            if (array_key_exists($pid, $config)) {
+//                $this->debug("### Found!!! ", [$config[$pid] ]);
+                $this->config = $config[$pid]['config'];
+            }
+//            $this->debug("### Final!!! ", [$this->config]);
             $this->lastConfigUpdate = time();
         }
     }
     
     protected function refreshTasks() {
         
-        $ttl = Utils::get('tasks_ttl', $this->config,'./');
+        if (!Console::getArg('--tasks-file')) {
+            return false;
+        }
+        
+        $ttl = Utils::get('tasks_ttl', $this->config,60);
                 
         $elapsedTime = (time() - $this->lastTasksUpdate);
         $diffTTL = $ttl - $elapsedTime;
         
+        $this->debug("### Tasks refreshing countdown $diffTTL ");  
         if ($diffTTL < 0) {
+            $this->debug("### Refreshing configuration");  
             $this->applyTasks('file',Console::getArg('--tasks-file'));
              $this->lastTasksUpdate = time();
         }

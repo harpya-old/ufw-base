@@ -93,6 +93,10 @@ abstract class Task {
             
         }
     }
+    
+    public function getAll() {        
+        return get_object_vars($this);
+    }
 
 
     public abstract function execute($parms=[]);

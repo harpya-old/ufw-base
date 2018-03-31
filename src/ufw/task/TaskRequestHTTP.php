@@ -52,8 +52,9 @@ class TaskRequestHTTP extends \harpya\ufw\Task {
         ]);        
         
         $options = array_replace($this->options, $parms);                
-        $result = $client->request($this->method, $this->uri, $options);
-        $response = $result->getBody();        
+        $this->response = $client->request($this->method, $this->uri, $options);
+        
+        $response = $this->response->getBody()->getContents();        
         
         return $response;
     }
