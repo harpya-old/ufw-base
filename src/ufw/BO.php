@@ -1,11 +1,17 @@
 <?php
 namespace harpya\ufw;
 
-
+/**
+ * Class Business Object base.
+ * 
+ * @author Eduardo Luz <eduardo@harpya.net>
+ * @copyright (c) 2018, Harpya.net
+ * @package harpya\ufw-base
+ */
 abstract class BO {
 
     protected $__dao;
-    protected $__data;
+    protected $__data = [];
     protected $id;
     
     /**
@@ -26,7 +32,12 @@ abstract class BO {
         return $this;
     }
 
-    
+    /**
+     * 
+     * @param array $map
+     * @param array $data
+     * @return array
+     */
     public function map($map=[], $data=[]) {
         $response = [];
         
@@ -58,6 +69,9 @@ abstract class BO {
     }
     
     
+    /**
+     * @return string the table name
+     */
     public abstract function getTableName();
     
     
@@ -73,23 +87,39 @@ abstract class BO {
         }        
     }
     
-    
+    /**
+     * 
+     * @return mixed
+     */
     public function haveUpdateField() {
         return false;
     }
     
+    
+    /**
+     * 
+     * @return string
+     */
     public function getSequenceName() {        
         return  $this->getTableName() .  '_id_seq';
     }
 
 
 
+    /**
+     * 
+     * @return array
+     */
     public function getMapFields() {
         $map = array_flip(array_keys(get_object_vars($this)));
         return $map;
     }
     
 
+    /**
+     * 
+     * @param array $arr
+     */
     public function insert($arr) {
         
         $mapped = $this->map($this->getMapFields(), $arr);
@@ -109,6 +139,12 @@ abstract class BO {
     }
 
 
+    /**
+     * 
+     * @param array $arr
+     * @param mixed $criteria
+     * @return mixed
+     */
     public function update($arr, $criteria=false) {
         $mapped = $this->map($this->getMapFields(), $arr);
         
@@ -122,6 +158,12 @@ abstract class BO {
     }
     
     
+    /**
+     * 
+     * @param mixed $criteria
+     * @return mixed
+     * @throws \Exception
+     */
     protected function getCriteria($criteria=false) {
         if ($criteria === false) {
             if ($this->id) {
@@ -134,6 +176,11 @@ abstract class BO {
     }
     
     
+    /**
+     * 
+     * @param mixed $criteria
+     * @return mixed
+     */
     public function delete($criteria=false) {
 
         $criteria = $this->getCriteria($criteria);
@@ -142,6 +189,11 @@ abstract class BO {
     }
     
     
+    /**
+     * 
+     * @param mixed $criteria
+     * @return array
+     */
     public function load($criteria=false) {
         $criteria = $this->getCriteria($criteria);
         
@@ -164,12 +216,108 @@ abstract class BO {
         
         $sql .= " WHERE $where";
         
+        $record = $this->getDAO()->selectOne($sql, $whereParms);
+        $this->bind($record);
         
-        $this->__data = $this->getDAO()->select($sql, $whereParms);
-        
-        return $this->__data;
+        return $record;
         
     }
+    
+    
+    /**
+     * 
+     * @param mixed $criteria
+     * @param mixed $orderBy 
+     * @param string $limit 
+     * @return array
+     */
+    public function loadList($criteria=false, $orderBy=false, $limit=false) {
+        $criteria = $this->getCriteria($criteria);
+        
+        $sql = "SELECT * FROM ". $this->getTableName();
+        
+        $where = '';
+        $whereParms = [];
+        if (is_array($criteria)) {
+            $whereArgs = [];            
+            foreach ($criteria as $attrName => $attrValue) {
+                if (is_numeric($attrName)) {
+                    $whereArgs[] = " $attrValue ";
+                } else {
+                    $whereArgs[] = " $attrName = ? ";
+                    $whereParms[] = $attrValue;
+                }
+            }
+            $where = join(" AND ", $whereArgs);
+        } elseif (is_string($criteria)) {
+            $where = $criteria;
+        }
+        
+        
+        
+        $sql .= " WHERE $where";
+        
+        if ($orderBy) {
+            if (is_array($orderBy)) {
+                $sql .= " ORDER BY " . join(',',$orderBy);
+            } elseif (is_scalar($orderBy)) {
+                $sql .= " ORDER BY $orderBy ";
+            }
+        }
+        
+        if ($limit) {
+            $sql .= " LIMIT $limit ";
+        }
+        
+        $list = $this->getDAO()->select($sql, $whereParms);
+        
+        return $list;
+        
+    }
+    
+    
+    /**
+     * 
+     * @param array $arr
+     */
+    public function bind($arr) {
+        $this->__data = $arr;
+        
+        $lsAttributes = get_object_vars($this);
+        foreach ($lsAttributes as $k => $v) {
+            if (Utils::get($k, $arr)) {
+                $this->$k = Utils::get($k, $arr);
+            }
+        }
+        
+    }
+    
+    /**
+     * 
+     * @param string $key
+     * @param mixed $default
+     * @return mixed
+     */
+    public function get($key,$default=false) {
+        return Utils::get($key, $this->__data, $default);
+    }
+    
+    /**
+     * 
+     * @param string $key
+     * @param mixed $value
+     */
+    public function set($key, $value) {
+        $lsAttributes = get_object_vars($this);
+        
+        if (Utils::get($key, $lsAttributes)) {
+            $this->$key = $value;
+        }
+        
+        $this->__data[$key] = $value;
+    }
+    
+    
     
 }
 
