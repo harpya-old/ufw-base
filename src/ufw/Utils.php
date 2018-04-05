@@ -23,10 +23,32 @@ class Utils {
     
     public static function get($key, $array=[], $default=false) {        
         if (is_array($array) && array_key_exists($key, $array)) {
-            return $array[$key];
-        } else {
-            return $default;
-        }        
+            return $array[$key];            
+        }
+        
+        if (is_array($array) && is_array($key)) {
+            switch (count($key)) {
+                case 0: 
+                    return $array;
+                case 1:
+                    return self::get($key[0], $array, $default);
+                case 2:
+                    $part0 = self::get($key[0], $array);
+                    return self::get($key[1], $part0, $default);
+                case 3:
+                    $part0 = self::get($key[0], $array);
+                    $part1 = self::get($key[1], $part0);
+                    return self::get($key[2], $part1, $default);
+                case 4:
+                    $part0 = self::get($key[0], $array);
+                    $part1 = self::get($key[1], $part0);
+                    $part2 = self::get($key[2], $part1);
+                    return self::get($key[3], $part2, $default);
+            }
+        }
+        
+        
+        return $default;
     }
     
 
