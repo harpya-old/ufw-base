@@ -115,7 +115,7 @@ class Setup {
      * Initialize the current workspace
      */
     protected function initProject() {
-        Utils::getInstance()->createDirectory(['apps', 'bootstrap', 'config', 'public', 'tmp/tpl_compile']);
+        Utils::getInstance()->createDirectory(['apps', 'bootstrap', 'config', 'public', 'tmp/tpl_compile', 'plugins']);
         foreach (self::FILES_BASE as $pathname => $contents) {
             Utils::getInstance()->createFile($pathname, $contents);
         }

@@ -112,7 +112,10 @@ class Router extends \AltoRouter {
      */
     public function evaluate($target) {
         
-        switch ($target['type']) {
+        switch ($target['type']) {             
+            case 'class' :
+                $return = $this->processClass($target['target'], $target['match']);
+                break;
             case 'controller' :
                 $return = $this->processController($target['target'], $target['match']);
                 break;
@@ -161,13 +164,21 @@ class Router extends \AltoRouter {
             }                            
         }
         
+        
+        if (substr($match['name'],0,7) =='plugin:') {
+            Application::getInstance()->preparePlugin($match['name']);
+        }
+        
+        
         if (is_array($match) && array_key_exists('target', $match)) {
             
             $target = $match['target'];
             
             $return = ['target'=>$target, 'match'=>$match, 'application' => $this->getApplicationName()];
             
-            if (array_key_exists('controller', $target)) {
+            if (array_key_exists('class', $target)) {
+                $return['type'] = 'class';
+            } elseif (array_key_exists('controller', $target)) {
                 $return['type'] = 'controller';
             } elseif (array_key_exists('view', $target)) {
                 $return['type'] = 'view';
@@ -214,6 +225,27 @@ class Router extends \AltoRouter {
     
     
     
+    protected function processClass($target, $match) {
+        $return = false;        
+        $class = $target['class'];
+        $method = $target['method'];
+        
+        if (($class != null) && (is_callable(array($class, $method)))) {
+            $params = $this->processRequest($match['params']);
+            $object = new $class($params);
+            Controller::getInstance($object);                
+            try{
+                $return = call_user_func_array(array($object, $method), [$params]);
+            } catch (\Exception $ex) {
+                $return = ['success'=>false,  'msg' => $ex->getMessage(), 'code' => $ex->getCode()];
+            }
+
+        } else {            
+            $return = ['success'=>false, 'msg' =>  "Target not found ($method)",'code'=>404, 'info'=> $target];
+        }
+        return $return;
+    }
+    
     protected function processController($target, $match) {
         $return = false;        
         $controller = $target['controller'];
@@ -257,5 +289,9 @@ class Router extends \AltoRouter {
         return $return;
     }
     
+    
+    public function getAllRoutes() {
+        return $this->routes;
+    }
     
 }

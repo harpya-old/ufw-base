@@ -135,7 +135,7 @@ abstract class BO {
             $this->getDAO()->insert($this->getTableName(), $mapped);
             $this->id = null;
         }
-        
+        return $this->getID();
     }
 
 

@@ -3,6 +3,7 @@ namespace harpya\ufw;
 
 class Application {
      use utils\Logger;
+     use PluginManager;
      
     const CMP_VIEW = 'view';
     const CMP_REQUEST = 'request';
@@ -40,6 +41,7 @@ class Application {
         if (is_array($props)) {
             $this->loadProps($props);
         }
+        $this->loadPluginList();
     }
     
     
@@ -77,7 +79,7 @@ class Application {
     
     
     public function run() {
-        $result = $this->getRouter()->resolve();        
+        $result = $this->getRouter()->resolve();    
         try {
             $response = $this->getRouter()->evaluate($result);
         } catch (\Exception $ex) {
@@ -101,7 +103,8 @@ class Application {
      */
     protected function getComponent($key, $index=false) {
         if (!Utils::get($key, $this->lsComponents)) {
-                echo "<pre>";
+            print_r($this->lsComponents);
+                echo "\n<pre>\n";
                 echo debug_print_backtrace();
 
             throw new \Exception("Component " . $key." is not defined",1);
@@ -210,7 +213,7 @@ class Application {
     
     
     protected function loadConfig() {
-        $path = $this->getConfig()->getPath().'/../config/routes.json';
+        $path = $this->getConfig()->getPath().'/routes.json';
         $this->getRouter()->loadRoutes($path);
     }
     
@@ -223,5 +226,22 @@ class Application {
     }
     
     
+    /**
+     * 
+     * @return boolean
+     */
+    public function isConfigured() {
+        return (count($this->lsComponents)>0);
+    }
+
+    /**
+     * 
+     * @return string
+     */
+    public function getConfigPath() {
+        if ($this->isConfigured()) {
+            return $this->getConfig()->getPath();
+        }        
+    }
     
 }

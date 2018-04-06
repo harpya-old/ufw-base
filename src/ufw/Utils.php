@@ -11,6 +11,12 @@ class Utils {
     protected static $instance;
     
     /**
+     *
+     * @var string 
+     */
+    protected $applicationName;
+    
+    /**
      * 
      * @return Utils
      */
@@ -114,7 +120,7 @@ class Utils {
     }
     
     
-    protected $applicationName;
+    
     public function getApplicationName() {
         if (!$this->applicationName) {
             $matches = [];
@@ -127,6 +133,27 @@ class Utils {
             }
         }
         return $this->applicationName;        
+    }
+    
+    
+    /**
+     * 
+     * @param string $filename
+     * @return array
+     * @throws \Exception
+     */
+    public function loadJSON($filename) {
+        if (file_exists($filename) && is_readable($filename)) {
+            $contents = file_get_contents($filename);
+            
+            $json = json_decode($contents, true);
+            if (!$json) {
+                throw new \Exception("Invalid JSON contents in file $filename",20);
+            }
+            return $json;
+        } else {
+             throw new \Exception("Unreachable file $filename",21);
+        }
     }
     
 }
