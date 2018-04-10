@@ -58,7 +58,7 @@ class Setup {
      * Shows the help options
      */
     public function help() {
-        
+        $this->showHeader();
         echo "ufw - Helper to uFw framework\n\nOptions:\n";
         foreach (self::HELP['options'] as $helpOption => $helpDescription) {
             echo "\n   $helpOption \t " . ($helpDescription['summary'] ?? "");
@@ -74,13 +74,7 @@ class Setup {
     }
 
     
-    /**
-     * Inspect the command line arguments and execute it.
-     *  
-     * @return void
-     */
-    public function run() {
-
+    protected function showHeader() {
         echo "
  _   _                              
 | | | |                             
@@ -92,6 +86,16 @@ class Setup {
                  |_|    |___/        
 
 ";
+    }
+    
+    /**
+     * Inspect the command line arguments and execute it.
+     *  
+     * @return void
+     */
+    public function run() {
+
+        
         
         // Create a new project
         if (Console::getArg('--create')) {
@@ -115,6 +119,7 @@ class Setup {
      * Initialize the current workspace
      */
     protected function initProject() {
+        $this->showHeader();
         Utils::getInstance()->createDirectory(['apps', 'bootstrap', 'config', 'public', 'tmp/tpl_compile', 'plugins']);
         foreach (self::FILES_BASE as $pathname => $contents) {
             Utils::getInstance()->createFile($pathname, $contents);
@@ -132,6 +137,7 @@ class Setup {
      * @param string $projectName
      */
     protected function createProject($projectName = 'myProj') {
+        $this->showHeader();
         Console::stdout("Creating $projectName \n");
 
         Utils::getInstance()->createDirectory("./apps/" . $projectName, ['src', 'routes', 'config', 'public', 'doc', 'templates']);
