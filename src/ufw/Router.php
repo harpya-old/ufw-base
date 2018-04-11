@@ -112,15 +112,16 @@ class Router extends \AltoRouter {
      */
     public function evaluate($target) {
         
-        switch ($target['type']) {             
+        
+        switch (Utils::get('type', $target)) {             
             case 'class' :
-                $return = $this->processClass($target['target'], $target['match']);
+                $return = $this->processClass(Utils::get('target',$target), Utils::get('match', $target));
                 break;
             case 'controller' :
-                $return = $this->processController($target['target'], $target['match']);
+                $return = $this->processController(Utils::get('type', $target), Utils::get('match', $target));
                 break;
             case 'view':
-                $return = $this->processView($target['target'], $target['match']);
+                $return = $this->processView($Utils::get('target', $target), Utils::get('match', $target));
                 break;
             case 'eval':
                 $return = eval($target['target']['eval']);
@@ -241,7 +242,7 @@ class Router extends \AltoRouter {
             }
 
         } else {            
-            $return = ['success'=>false, 'msg' =>  "Target not found ($method)",'code'=>404, 'info'=> $target];
+            $return = ['success'=>false, 'msg' =>  "Target not found ($method)",'code'=>4041, 'info'=> $target];
         }
         return $return;
     }
@@ -271,7 +272,7 @@ class Router extends \AltoRouter {
             }
 
         } else {            
-            $return = ['success'=>false, 'msg' =>  "Target not found ($method)",'code'=>404, 'info'=> $target];
+            $return = ['success'=>false, 'msg' =>  "Target not found ($method)",'code'=>4042, 'info'=> $target];
         }
         return $return;
     }
