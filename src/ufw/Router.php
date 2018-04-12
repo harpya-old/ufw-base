@@ -118,7 +118,7 @@ class Router extends \AltoRouter {
                 $return = $this->processClass(Utils::get('target',$target), Utils::get('match', $target));
                 break;
             case 'controller' :
-                $return = $this->processController(Utils::get('type', $target), Utils::get('match', $target));
+                $return = $this->processController(Utils::get('target', $target), Utils::get('match', $target));
                 break;
             case 'view':
                 $return = $this->processView($Utils::get('target', $target), Utils::get('match', $target));
