@@ -156,6 +156,51 @@ class Utils {
         }
     }
     
+    
+    
+    public function execShellCommand($command,$cwd='~/',$env=[]) {
+        $response = [
+            'stdout' => [],
+            'stderr' => [],
+            'output' => [],
+            'return_code' => 0
+        ];
+        
+        $descriptorspec = array(
+           0 => array("pipe", "r"), 
+           1 => array("pipe", "w"), 
+           2 => array("pipe", "w")
+        );
+        ob_start();
+        $pipes = [];
+        $process = proc_open($command, $descriptorspec, $pipes, $cwd, $env); //run test_gen.php
+
+        if (is_resource($process)) 
+        {
+            
+            while ($line = fgets($pipes[1],4096)) {
+                $response['stdout'][] = trim($line);
+            }
+            
+            while ($line = fgets($pipes[2],4096)) {
+                $response['stderr'][] = trim($line);
+            }
+
+            fclose($pipes[0]);
+            fclose($pipes[1]);
+            fclose($pipes[2]);
+            $response['return_code'] = proc_close($process);  
+            
+        }    
+
+         $contents = ob_get_contents();
+         ob_end_clean();
+         $response['output'] = $contents;
+        
+        return $response;   
+    }
+    
+    
 }
 
 
