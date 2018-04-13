@@ -89,7 +89,7 @@ class Router extends \AltoRouter {
      * @param string $uri
      * @return string
      */
-    protected function preProcessURI($uri) {
+    public function preProcessURI($uri) {
         $s = preg_replace("/\{([\w]+)\}/", "[*:$1]", $uri);
             
         if (!empty($s)) {
@@ -121,7 +121,7 @@ class Router extends \AltoRouter {
                 $return = $this->processController(Utils::get('target', $target), Utils::get('match', $target));
                 break;
             case 'view':
-                $return = $this->processView($Utils::get('target', $target), Utils::get('match', $target));
+                $return = $this->processView(Utils::get('target', $target), Utils::get('match', $target));
                 break;
             case 'eval':
                 $return = eval($target['target']['eval']);
@@ -156,6 +156,9 @@ class Router extends \AltoRouter {
      */
     public function resolve() {
         $return = false;
+        
+//        print_r($this->getAllRoutes());
+        
         $match = $this->match();
 
         if (!$match) {            
@@ -163,6 +166,10 @@ class Router extends \AltoRouter {
             if ($target) {
                 $match = ['target' => $target];
             }                            
+        }
+
+        if (Utils::get('params', $match)) {
+            $this->loadParams(Utils::get('params', $match));
         }
         
         
@@ -195,6 +202,11 @@ class Router extends \AltoRouter {
         return $return;        
     }
     
+    
+    protected function loadParams($arr) {
+        //$_REQUEST = array_replace($_REQUEST, $arr);
+        Application::getInstance()->getRequest()->update(array_replace($_REQUEST, $arr));
+    }
     
     protected function getDefaultRoute() {
         if (utils::get($this->getApplicationName(), $this->defaults)) {
@@ -230,7 +242,7 @@ class Router extends \AltoRouter {
         $return = false;        
         $class = $target['class'];
         $method = $target['method'];
-        
+
         if (($class != null) && (is_callable(array($class, $method)))) {
             $params = $this->processRequest($match['params']);
             $object = new $class($params);

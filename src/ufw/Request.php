@@ -56,5 +56,9 @@ class Request {
         return Utils::get($key, $this->headers, $default);
     }
     
+    public function update($arr) {
+        $this->parameters = array_replace($this->parameters, $arr);
+    }
+    
     
 }

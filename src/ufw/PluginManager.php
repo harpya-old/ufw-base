@@ -91,7 +91,11 @@ trait PluginManager {
                 $newURI = str_replace("//", "/", "/plugin/$pluginName/$uri");
                 $uid = 'plugin:'.md5(microtime(true) . rand(0, 9999999));
                 self::$pluginMap[$uid] = $pluginName;
-                $this->getRouter()->map($method,$newURI, $target,$uid);
+                
+                $this->getRouter()->map($method,
+                        $this->getRouter()->preProcessURI($newURI), 
+                        $target,
+                        $uid);
             }
         }
 
