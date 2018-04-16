@@ -1,14 +1,21 @@
 <?php
-return function () {
+
+/**
+ * @return bool 
+ */
+return function () : bool {
     $files = array(
       __DIR__ . '/../../../autoload.php',  // composer dependency
       __DIR__ . '/../vendor/autoload.php', // stand-alone package
     );
+    $response = true;
     foreach ($files as $file) {
-        if (is_file($file)) {
+        if (is_file($file)) {            
             require_once $file;
-            return true;
+            //return true;
+        } else {
+            $response = false;
         }
     }
-    return false;
+    return $response;
 };

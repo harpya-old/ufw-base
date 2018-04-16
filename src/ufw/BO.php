@@ -196,7 +196,7 @@ abstract class BO {
      */
     public function load($criteria=false) {
         $criteria = $this->getCriteria($criteria);
-        
+
         $sql = "SELECT * FROM ". $this->getTableName();
         
         $where = '';

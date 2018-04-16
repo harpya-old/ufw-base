@@ -63,7 +63,7 @@ class AgentCli {
     
     public function help() {
         echo "ufw - Async agent to uFw framework\nOptions:\n";
-        foreach (self::HELP['options'] as $helpOption => $helpDescription) {
+        foreach (self::HELP['options'] as $helpOption => $helpDescription ) {
             echo "\n   $helpOption \t " . ($helpDescription['summary']??"");
             if (array_key_exists('examples', $helpDescription)) {
                 echo "\n            \t Ex:";

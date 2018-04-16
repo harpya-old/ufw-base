@@ -89,7 +89,7 @@ class Router extends \AltoRouter {
      * @param string $uri
      * @return string
      */
-    public function preProcessURI($uri) {
+    protected function preProcessURI($uri) {
         $s = preg_replace("/\{([\w]+)\}/", "[*:$1]", $uri);
             
         if (!empty($s)) {
@@ -156,9 +156,6 @@ class Router extends \AltoRouter {
      */
     public function resolve() {
         $return = false;
-        
-//        print_r($this->getAllRoutes());
-        
         $match = $this->match();
 
         if (!$match) {            
@@ -167,11 +164,6 @@ class Router extends \AltoRouter {
                 $match = ['target' => $target];
             }                            
         }
-
-        if (Utils::get('params', $match)) {
-            $this->loadParams(Utils::get('params', $match));
-        }
-        
         
         if (substr($match['name'],0,7) =='plugin:') {
             Application::getInstance()->preparePlugin($match['name']);
@@ -202,11 +194,6 @@ class Router extends \AltoRouter {
         return $return;        
     }
     
-    
-    protected function loadParams($arr) {
-        //$_REQUEST = array_replace($_REQUEST, $arr);
-        Application::getInstance()->getRequest()->update(array_replace($_REQUEST, $arr));
-    }
     
     protected function getDefaultRoute() {
         if (utils::get($this->getApplicationName(), $this->defaults)) {
@@ -242,7 +229,16 @@ class Router extends \AltoRouter {
         $return = false;        
         $class = $target['class'];
         $method = $target['method'];
+        $app = $this->determineAppName($target);
+        
+        $pathToInclude = Application::getInstance()->getApplicationsPath2()."$app/bootstrap.php";        
 
+        if (file_exists($pathToInclude)) {
+            include $pathToInclude;
+        } else {
+            throw new \Exception("Bootstrap file not found", 405);
+        }
+        
         if (($class != null) && (is_callable(array($class, $method)))) {
             $params = $this->processRequest($match['params']);
             $object = new $class($params);
@@ -258,14 +254,27 @@ class Router extends \AltoRouter {
         }
         return $return;
     }
+
+    protected function determineAppName($target) {
+        $app = Utils::get('app', $target);
+        
+        if ($app) {
+            \harpya\ufw\Utils::getInstance()->setApplicationName($app);
+        } else {
+            $app = $this->getApplicationName();
+        }
+        return $app;
+    }
+
     
     protected function processController($target, $match) {
         $return = false;        
         $controller = $target['controller'];
         $method = $target['method'];
+        $app = $this->determineAppName($target);
         
-        $pathToInclude = Application::getInstance()->getApplicationsPath2().$this->getApplicationName()."/bootstrap.php";        
-        
+        $pathToInclude = Application::getInstance()->getApplicationsPath2()."$app/bootstrap.php";        
+
         if (file_exists($pathToInclude)) {
             include $pathToInclude;
         } else {

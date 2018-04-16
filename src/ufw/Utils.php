@@ -1,7 +1,12 @@
 <?php
-
 namespace harpya\ufw;
 
+/**
+ * Utils functions
+ * 
+ * @author Eduardo Luz <eduluz@harpya.net>
+ * @package harpya/ufw-base
+ */
 class Utils {
     
     /**
@@ -27,6 +32,14 @@ class Utils {
         return self::$instance;
     }
     
+    
+    /**
+     * 
+     * @param string $key
+     * @param array $array
+     * @param mixed $default
+     * @return mixed
+     */
     public static function get($key, $array=[], $default=false) {        
         if (is_array($array) && array_key_exists($key, $array)) {
             return $array[$key];            
@@ -119,8 +132,18 @@ class Utils {
         file_put_contents($pathname, base64_decode($contents));
     }
     
+    /**
+     * 
+     * @param string $appName
+     */
+    public function setApplicationName($appName) {
+        $this->applicationName = $appName;
+    }
     
-    
+    /**
+     * 
+     * @return string
+     */
     public function getApplicationName() {
         if (!$this->applicationName) {
             $matches = [];
@@ -158,6 +181,13 @@ class Utils {
     
     
     
+    /**
+     * 
+     * @param string $command
+     * @param string $cwd
+     * @param array $env
+     * @return mixed
+     */
     public function execShellCommand($command,$cwd='~/',$env=[]) {
         $response = [
             'stdout' => [],
@@ -199,7 +229,7 @@ class Utils {
         
         return $response;   
     }
-    
+
     
 }
 

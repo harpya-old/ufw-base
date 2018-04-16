@@ -52,6 +52,11 @@ class Application {
     }
     
     
+    /**
+     * 
+     * @param string        $cmpID
+     * @param ComponentBase $value
+     */
     public function addProp($cmpID, $value) {
         switch ($cmpID) {
             case self::DEF_APPS_PATH:
@@ -96,17 +101,16 @@ class Application {
     
     /**
      * 
-     * @param type $key
-     * @param type $index
-     * @return type
+     * @param string $key
+     * @param mixed $index
+     * @return ComponentBase
      * @throws \Exception
      */
     protected function getComponent($key, $index=false) {
         if (!Utils::get($key, $this->lsComponents)) {
             print_r($this->lsComponents);
-                echo "\n<pre>\n";
-                echo debug_print_backtrace();
-
+            echo "\n<pre>\n";                
+            debug_print_backtrace();
             throw new \Exception("Component " . $key." is not defined",1);
         }
         
