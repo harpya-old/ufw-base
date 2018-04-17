@@ -62,8 +62,13 @@ class Controller {
         if ($view) {
             $this->view = $view;
         } elseif (!$this->view) {
-            $this->view = new View();
+            $this->view = Application::getInstance()->getView();            
         }
+        
+        if (!$this->view) {
+            throw new \Exception("Undefined View");
+        }
+        
         return $this->view;
     }
     
