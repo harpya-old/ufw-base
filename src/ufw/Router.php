@@ -89,7 +89,7 @@ class Router extends \AltoRouter {
      * @param string $uri
      * @return string
      */
-    protected function preProcessURI($uri) {
+    public function preProcessURI($uri) {
         $s = preg_replace("/\{([\w]+)\}/", "[*:$1]", $uri);
             
         if (!empty($s)) {
