@@ -111,10 +111,16 @@ abstract class BO {
      * @return array
      */
     public function getMapFields() {
-        $map = array_flip(array_keys(get_object_vars($this)));
+        $map = array_flip(array_keys($this->getValues()));
         return $map;
     }
     
+    /**
+     * @return array 
+     */
+    public function getValues() {
+        return get_object_vars($this);
+    }
 
     /**
      * 
@@ -153,8 +159,41 @@ abstract class BO {
         }
         
         $criteria = $this->getCriteria($criteria);
+        $return = $this->getDAO()->update($this->getTableName(), $mapped, $criteria);                                
         
-        return $this->getDAO()->update($this->getTableName(), $mapped, $criteria);        
+        return $return;
+    }
+
+    /**
+     * 
+     * @param array $arr
+     * @param mixed $criteria
+     * @return mixed
+     */
+    public function updateWholeObject($arr, $criteria=false,$insertIfDoesnotExists=false) {
+        $response = [];
+        $mapped = $this->map($this->getMapFields(), $arr);
+        
+        if ($this->haveUpdateField()) {
+            $mapped[$this->haveUpdateField()] = 'now()';
+        }
+        
+        $reg = $this->load($criteria);
+        
+        if ($reg) {
+            $criteria = $this->getCriteria($criteria);            
+            $return = $this->getDAO()->update($this->getTableName(), $mapped, $criteria);
+            $response['operation'] = 'u';
+        } else {
+            if ($insertIfDoesnotExists) {
+                $return = $this->insert($arr);
+                $response['operation'] = 'i';
+            } else {
+                $response = ['success'=>false,'msg'=>'Record does not exists', 'code'=>102];
+            }
+        }
+        
+        return $response;
     }
     
     
