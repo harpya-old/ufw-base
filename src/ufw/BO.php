@@ -119,7 +119,15 @@ abstract class BO {
      * @return array 
      */
     public function getValues() {
-        return get_object_vars($this);
+        $values = get_object_vars($this);
+        $response = array_filter($values, function ($v,$k) { 
+            if (substr($k,0,1)=='_') { 
+                return false; 
+            } else {
+                return true;
+            }            
+        }, ARRAY_FILTER_USE_BOTH);
+        return $response;
     }
 
     /**
