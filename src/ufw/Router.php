@@ -288,6 +288,11 @@ class Router extends \AltoRouter {
             Controller::getInstance($object);                
             try{
                 $return = call_user_func_array(array($object, $method), [$params]);
+            } catch (exception\AppException $ex) {
+                $return = ['success'=>false,  'msg' => $ex->getMessage(), 'code' => $ex->getCode()];
+                if ($ex->getHttpCode()){
+                    $return['http_code'] = $ex->getHttpCode();
+                }
             } catch (\Exception $ex) {
                 $return = ['success'=>false,  'msg' => $ex->getMessage(), 'code' => $ex->getCode()];
             }

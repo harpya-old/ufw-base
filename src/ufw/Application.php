@@ -86,16 +86,27 @@ class Application {
     public function run() {
         $result = $this->getRouter()->resolve();    
         try {
-            $response = $this->getRouter()->evaluate($result);
-        } catch (\Exception $ex) {
-            http_response_code($ex->getCode());
+            $response = $this->getRouter()->evaluate($result);            
+        } catch (\Exception $ex) {            
             $response = ['msg'=>$ex->getMessage(), 'code'=>$ex->getCode()];
         }
-
         
         if ($response) {
+            $this->prepareHTTPErrorResponse($response);            
             $this->sendJSON($response);
         }
+    }
+    
+    
+    protected function prepareHTTPErrorResponse(&$response) {
+        if (is_array($response) && array_key_exists('code', $response)) {
+            if (array_key_exists('http_code', $response)) {
+                http_response_code($response['http_code']);
+                unset($response['http_code']);
+            } else {
+                http_response_code(500);
+            }            
+        }        
     }
     
     
