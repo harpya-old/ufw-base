@@ -229,7 +229,66 @@ class Utils {
         
         return $response;   
     }
+    
+    
+    
+    public static function createToken($props=[]) {
+        
+        if (!array_key_exists('tm', $props)) {
+            $props['tm'] = time();
+        }
+        
+        if (!array_key_exists('ttl', $props)) {
+            $ttl = getenv('SESSION_TTL');
+            if (!$ttl) {
+                $ttl = 60;
+            }
+            $props['ttl'] =  $ttl; // minutes
+        }
+        
+        $hash = self::createTokenHash($props);
+        
+        $props['hash'] = $hash;
+        return $props;
+    }
+    
+    
+    protected static function createTokenHash($props=[]) {
+        
+        if (isset($_SERVER) && is_array($_SERVER)) {
+            $props = array_replace(self::getServerVars(),  $props);
+        }
+        
+        $s = base64_decode(json_encode($props,true));
+    
+        $hash = hash('sha256', $s);
+        
+        return $hash;
+    }
+    
+    
+    protected static function getServerVars() {
 
+        if (!is_array($_SERVER)) {
+            return [];
+        }
+        
+        $list = ['REMOTE_ADDR','REMOTE_PORT','HTTP_USER_AGENT'];
+        
+        $response = [];
+        
+        for ($i=0;$i<count($list);$i++) {
+            $item = $list[$i];
+            
+            if (array_key_exists($item, $_SERVER)) {
+                $response[$item] = $_SERVER[$item];
+            }            
+        }
+                
+        return $response;
+    }
+    
+    
     
 }
 
@@ -237,20 +296,16 @@ class Utils {
 
 
 
-if (!function_exists('\getallheaders'))
-    {
-            function getallheaders()
-            {
-                    $headers = [];
-                    foreach ($_SERVER as $name => $value)
-                    {
-                            if (substr($name, 0, 5) == 'HTTP_')
-                            {
-                                    $headers[str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', substr($name, 5)))))] = $value;
-                            }
-                    }
-                    return $headers;
+if (!function_exists('\getallheaders')) {
+    function getallheaders() {
+        $headers = [];
+        foreach ($_SERVER as $name => $value) {
+            if (substr($name, 0, 5) == 'HTTP_') {
+                $headers[str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', substr($name, 5)))))] = $value;
             }
+        }
+        return $headers;
     }
+}
 
     

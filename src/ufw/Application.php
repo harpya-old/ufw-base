@@ -12,6 +12,7 @@ class Application {
     const CMP_ROUTER = 'route';
     const CMP_HTTP = 'http';
     const CMP_CONFIG = 'config';
+    const CMP_SESSION = 'session';
     
     const DEF_APPS_PATH = 'app_path';
     
@@ -119,10 +120,7 @@ class Application {
      */
     protected function getComponent($key, $index=false) {
         if (!Utils::get($key, $this->lsComponents)) {
-            print_r($this->lsComponents);
-            echo "\n<pre>\n";                
-            debug_print_backtrace();
-            throw new \Exception("Component " . $key." is not defined",1);
+            throw new \Exception("Component " . $key." is not defined",1000);
         }
         
         $cmp = Utils::get($key, $this->lsComponents);
@@ -259,4 +257,18 @@ class Application {
         }        
     }
     
+    /**
+     * 
+     * @return \harpya\ufw\Session
+     */
+    public function getSession() {
+        try {
+            $session = $this->getComponent(self::CMP_SESSION);
+        } catch (\Exception $ex) {
+            $session = \harpya\ufw\Session::getInstance();
+        }
+        
+        
+        return $session;
+    }
 }
