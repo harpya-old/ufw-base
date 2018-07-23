@@ -2,6 +2,10 @@
 
 namespace harpya\ufw;
 
+/**
+ * @author Eduardo Luz <eduluz@harpya.net>
+ * @package ufw
+ */
 class Console extends \Clio\Console {
     
     protected static $lsArgs = false;

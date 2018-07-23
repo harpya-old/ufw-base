@@ -1,6 +1,10 @@
 <?php
 namespace harpya\ufw;
 
+/**
+ * @author Eduardo Luz <eduluz@harpya.net>
+ * @package ufw
+ */
 class DAO extends \PDO {
     
     

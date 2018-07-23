@@ -1,6 +1,10 @@
 <?php
 namespace harpya\ufw;
 
+/**
+ * @author Eduardo Luz <eduluz@harpya.net>
+ * @package ufw
+ */
 class Application {
      use utils\Logger;
      use PluginManager;
@@ -13,6 +17,7 @@ class Application {
     const CMP_HTTP = 'http';
     const CMP_CONFIG = 'config';
     const CMP_SESSION = 'session';
+    const CMP_CRYPTO = 'crypto';
     
     const DEF_APPS_PATH = 'app_path';
     
@@ -118,7 +123,7 @@ class Application {
      * @return ComponentBase
      * @throws \Exception
      */
-    protected function getComponent($key, $index=false) {
+    public function getComponent($key, $index=false) {
         if (!Utils::get($key, $this->lsComponents)) {
             throw new \Exception("Component " . $key." is not defined",1000);
         }
@@ -271,4 +276,19 @@ class Application {
         
         return $session;
     }
+    
+    
+    /**
+     * 
+     * @return \harpya\ufw\Crypto
+     */
+    public function getCrypto() {
+        try {
+            $crypto = $this->getComponent(self::CMP_CRYPTO);
+        } catch (\Exception $ex) {
+            $crypto = new Crypto(getenv('CRYPTO:SEED'));
+        }
+        return $crypto;
+    }
+    
 }

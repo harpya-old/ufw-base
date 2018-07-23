@@ -2,7 +2,6 @@
 namespace harpya\ufw;
 
 
-
 class Request {
     
     const HTTP_GET = 'get';
@@ -62,3 +61,4 @@ class Request {
     
     
 }
+

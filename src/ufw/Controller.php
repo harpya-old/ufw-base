@@ -2,6 +2,10 @@
 
 namespace harpya\ufw;
 
+/**
+ * @author Eduardo Luz <eduluz@harpya.net>
+ * @package ufw
+ */
 class Controller {
     
     protected $view;

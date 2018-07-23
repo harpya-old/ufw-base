@@ -2,6 +2,11 @@
 namespace harpya\ufw;
 
 use \harpya\ufw\Utils;
+
+/**
+ * @author Eduardo Luz <eduluz@harpya.net>
+ * @package ufw
+ */
 abstract class Task {
     
     const TASK_REQUEST_HTTP = 'request_http';

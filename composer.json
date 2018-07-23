@@ -17,11 +17,12 @@
         "monolog/monolog":"*"
     },
     "require-dev": {
-        "phpunit/phpunit": "^7.0"
+        "phpunit/phpunit": "=7.0"
     },
     "autoload": {
         "psr-4": {
-            "harpya\\ufw\\": "src/ufw"
+            "harpya\\ufw\\": "src/ufw",
+            "harpya\\tests\\" : "tests"
         }
     },    
     "bin": ["bin/ufw", "bin/ufw-agent"]
