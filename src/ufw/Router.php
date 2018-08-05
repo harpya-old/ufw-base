@@ -1,6 +1,7 @@
 <?php
 
 namespace harpya\ufw;
+use Phinx\Util\Util;
 
 /**
  * @author Eduardo Luz <eduluz@harpya.net>
@@ -77,6 +78,9 @@ class Router extends \AltoRouter {
             $uri = $prefix . $this->preProcessURI($uri);
             
             foreach ($options as $method => $target) {
+
+                if (!is_array($target)) continue;
+
                 if (array_key_exists('name', $target)) {
                     $this->map($method, $uri, $target, $target['name']);
                 } else {
@@ -167,8 +171,9 @@ class Router extends \AltoRouter {
                 $match = ['target' => $target];
             }                            
         }
-        
-        if (substr($match['name'],0,7) =='plugin:') {
+
+
+        if (substr(Utils::get('name', $match, ''),0,7) =='plugin:') {
             Application::getInstance()->preparePlugin($match['name']);
         }
         
@@ -286,7 +291,7 @@ class Router extends \AltoRouter {
         
         
         if (($controller != null) && (is_callable(array($controller, $method)))) {
-            $params = $this->processRequest($match['params']);
+            $params = $this->processRequest( Utils::get('params',$match,[]));
             $object = new $controller($params);
             Controller::getInstance($object);                
             try{
